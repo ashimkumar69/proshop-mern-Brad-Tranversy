@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import products from "../products";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Image from "react-bootstrap/Image";
@@ -8,9 +7,17 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Rating from "../components/Rating";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
+import axios from "axios";
 
 const ProductScreen = ({ match: { params } }) => {
-  const product = products.find((product) => +product._id === +params.id);
+  const [product, setProduct] = useState({});
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const { data } = await axios.get(`/api/products/${params.id}`);
+      setProduct(data);
+    };
+    fetchProduct();
+  }, [params.id]);
 
   return (
     <React.Fragment>
@@ -28,7 +35,7 @@ const ProductScreen = ({ match: { params } }) => {
             </ListGroup.Item>
             <ListGroup.Item>
               <Rating
-                value={product.rating}
+                value={+product.rating}
                 text={`${product.numReviews} Reviews`}
               />
             </ListGroup.Item>
