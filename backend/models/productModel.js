@@ -24,7 +24,7 @@ const reviewSchema = new Schema(
 const productSchema = new Schema(
   {
     user: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "User",
     },
@@ -69,5 +69,5 @@ const productSchema = new Schema(
     timestamps: true,
   }
 );
-
-export default mongoose.model("Product", productSchema);
+const Product = mongoose.model("Product", productSchema);
+export default Product;
