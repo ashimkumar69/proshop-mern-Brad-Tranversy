@@ -11,6 +11,8 @@ router.get(
   "/",
   asyncHandler(async (req, res, next) => {
     const products = await Product.find({});
+    // res.status(401);
+    // throw new Error("an error occure custom");
     res.json(products);
   })
 );
@@ -23,6 +25,8 @@ router.get(
   asyncHandler(async (req, res, next) => {
     const product = await Product.findById(req.params.id);
     if (product) {
+      // res.status(401);
+      // throw new Error("an error occure custom");
       res.json(product);
     } else {
       res.status(404);
