@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -11,8 +11,10 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { useSelector, useDispatch } from "react-redux";
 import { detailsProduct } from "../actions/productActions";
+import Form from "react-bootstrap/Form";
 
-const ProductScreen = ({ match: { params } }) => {
+const ProductScreen = ({ history, match: { params } }) => {
+  const [qty, setQty] = useState(1);
   const dispatch = useDispatch();
   const productDetails = useSelector((state) => state.productDetails);
   const { product, loading, error } = productDetails;
@@ -21,6 +23,10 @@ const ProductScreen = ({ match: { params } }) => {
     dispatch(detailsProduct(params.id));
   }, [params.id, dispatch]);
 
+  const addToCardHandler = () => {
+    history.push(`/cart/${params.id}?qty=${qty}`);
+  };
+  
   return (
     <React.Fragment>
       <Link to="/" className="btn btn-light my-3">
@@ -64,6 +70,7 @@ const ProductScreen = ({ match: { params } }) => {
                     </Col>
                   </Row>
                 </ListGroup.Item>
+
                 <ListGroup.Item>
                   <Row>
                     <Col>Status:</Col>
@@ -72,8 +79,31 @@ const ProductScreen = ({ match: { params } }) => {
                     </Col>
                   </Row>
                 </ListGroup.Item>
+
+                {product.countInStock > 0 && (
+                  <ListGroup.Item>
+                    <Row>
+                      <Col>Qty:</Col>
+                      <Col>
+                        <Form.Control
+                          as="select"
+                          value={qty}
+                          onChange={(e) => setQty(e.target.value)}
+                        >
+                          {[...Array(product.countInStock).keys()].map((x) => (
+                            <option key={x + 1} value={x + 1}>
+                              {x + 1}
+                            </option>
+                          ))}
+                        </Form.Control>
+                      </Col>
+                    </Row>
+                  </ListGroup.Item>
+                )}
+
                 <ListGroup.Item>
                   <Button
+                    onClick={addToCardHandler}
                     className="btn btn-block"
                     variant="dark"
                     type="button"
