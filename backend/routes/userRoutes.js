@@ -1,8 +1,9 @@
 import express from "express";
 import {
   authUser,
-  userProfile,
+  getUserProfile,
   registerUser,
+  updateUserProfile,
 } from "../controllers/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
@@ -19,6 +20,9 @@ router.route("/login").post(authUser);
 // @desc Fetch a User Profile
 // @route GET  /api/users/profile
 // @access Protected
-router.route("/profile").get(protect, userProfile);
+router
+  .route("/profile")
+  .get(protect, getUserProfile)
+  .put(protect, updateUserProfile);
 
 export default router;

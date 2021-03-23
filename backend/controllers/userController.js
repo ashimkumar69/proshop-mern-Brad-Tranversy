@@ -57,7 +57,7 @@ const authUser = asyncHandler(async (req, res, next) => {
 // @desc Fetch a User Profile
 // @route GET  /api/users/profile
 // @access Protected
-const userProfile = asyncHandler(async (req, res, next) => {
+const getUserProfile = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
@@ -73,4 +73,32 @@ const userProfile = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { authUser, userProfile, registerUser };
+// @desc update a User Profile
+// @route PUT  /api/users/profile
+// @access Protected
+const updateUserProfile = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+
+    const updatedUser = await user.save();
+
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isAdmin: updatedUser.isAdmin,
+      token: generateToken(updatedUser._id),
+    });
+  } else {
+    res.status(401);
+    throw new Error("No User");
+  }
+});
+
+export { authUser, getUserProfile, registerUser, updateUserProfile };
