@@ -101,4 +101,81 @@ const updateUserProfile = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { authUser, getUserProfile, registerUser, updateUserProfile };
+// @desc get all Users
+// @route GET  /api/users
+// @access Protected/admin
+const getUsers = asyncHandler(async (req, res, next) => {
+  const users = await User.find({}).select("-password");
+
+  if (users) {
+    res.json(users);
+  } else {
+    res.status(401);
+    throw new Error("No User");
+  }
+});
+
+// @desc Delete User
+// @route DELETE  /api/users/:id
+// @access Protected/admin
+const deleteUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    await user.deleteOne();
+    res.json({ message: "User Delete Successfully" });
+  } else {
+    res.status(404);
+    throw new Error("No User Found");
+  }
+});
+
+// @desc get User
+// @route GET  /api/users/:id
+// @access Protected/admin
+const getUserById = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id).select("-password");
+
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404);
+    throw new Error("No User Found");
+  }
+});
+
+// @desc update a User
+// @route PUT  /api/users/:id
+// @access Protected/Admin
+const updateUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.isAdmin = req.body.isAdmin;
+
+    const updatedUser = await user.save();
+
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isAdmin: updatedUser.isAdmin,
+    });
+  } else {
+    res.status(401);
+    throw new Error("No User");
+  }
+});
+
+export {
+  authUser,
+  getUserProfile,
+  registerUser,
+  updateUserProfile,
+  getUsers,
+  deleteUser,
+  getUserById,
+  updateUser,
+};

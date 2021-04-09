@@ -9,7 +9,9 @@ import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 const app = express();
 dotenv.config();
+// mongoDB connection established
 connectDB();
+
 app.use(express.json());
 
 app.get("/", (req, res, next) => {

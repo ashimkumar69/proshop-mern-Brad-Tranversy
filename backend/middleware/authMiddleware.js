@@ -2,9 +2,7 @@ import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import JWT from "jsonwebtoken";
 
-// @desc Fetch a User Profile
-// @route GET  /api/users/profile
-// @access Protected
+// token user get logged
 const protect = asyncHandler(async (req, res, next) => {
   let token;
 
@@ -17,6 +15,7 @@ const protect = asyncHandler(async (req, res, next) => {
       const decoded = JWT.verify(token, process.env.JWT_SECRET);
 
       req.user = await User.findById(decoded.id).select("-password");
+      
       next();
     } catch (error) {
       res.status(401);
@@ -28,4 +27,14 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { protect };
+// admin user get logged
+const admin = asyncHandler(async (req, res, next) => {
+  if (req.user && req.user.isAdmin) {
+    next();
+  } else {
+    res.status(401);
+    throw new Error("Not Authorized as an admin");
+  }
+});
+
+export { protect, admin };
