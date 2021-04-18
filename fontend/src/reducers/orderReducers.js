@@ -2,13 +2,20 @@ import {
   ORDER_CREATE_FAIL,
   ORDER_CREATE_REQUEST,
   ORDER_CREATE_SUCCESS,
+  ORDER_DELIVER_FAIL,
+  ORDER_DELIVER_REQUEST,
+  ORDER_DELIVER_RESET,
+  ORDER_DELIVER_SUCCESS,
   ORDER_DETAILS_FAIL,
   ORDER_DETAILS_REQUEST,
   ORDER_DETAILS_SUCCESS,
+  ORDER_LIST_FAIL,
   ORDER_LIST_MY_FAIL,
   ORDER_LIST_MY_REQUEST,
   ORDER_LIST_MY_RESET,
   ORDER_LIST_MY_SUCCESS,
+  ORDER_LIST_REQUEST,
+  ORDER_LIST_SUCCESS,
   ORDER_PAY_FAIL,
   ORDER_PAY_REQUEST,
   ORDER_PAY_RESET,
@@ -131,6 +138,42 @@ export const orderPayReducer = (state = initialOrderPay, action) => {
   }
 };
 
+const initialOrderDeliver = {
+  loading: false,
+  error: false,
+  success: false,
+};
+
+export const orderDeliverReducer = (state = initialOrderDeliver, action) => {
+  switch (action.type) {
+    case ORDER_DELIVER_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: false,
+        success: false,
+      };
+    case ORDER_DELIVER_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: false,
+        success: true,
+      };
+    case ORDER_DELIVER_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    case ORDER_DELIVER_RESET:
+      return {};
+
+    default:
+      return state;
+  }
+};
+
 const initialOrderListMy = {
   loading: false,
   error: false,
@@ -165,6 +208,39 @@ export const orderListMyReducer = (state = initialOrderListMy, action) => {
         error: false,
         orders: [],
       };
+    default:
+      return state;
+  }
+};
+
+const initialOrderList = {
+  loading: false,
+  error: false,
+  orders: [],
+};
+
+export const orderListReducer = (state = initialOrderList, action) => {
+  switch (action.type) {
+    case ORDER_LIST_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: false,
+      };
+    case ORDER_LIST_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: false,
+        orders: action.payload,
+      };
+    case ORDER_LIST_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+
     default:
       return state;
   }

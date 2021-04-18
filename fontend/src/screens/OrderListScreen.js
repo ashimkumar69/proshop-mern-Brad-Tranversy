@@ -7,29 +7,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { ListUsers } from "../actions/userActions";
 import { LinkContainer } from "react-router-bootstrap";
 import Table from "react-bootstrap/Table";
-import { deleteUser } from "../actions/userActions";
-function UserListScreen({ history }) {
+import { listOrders } from "../actions/orderActions";
+
+function OrderListScreen({ history }) {
   const dispatch = useDispatch();
-  const { users, loading, error } = useSelector((state) => state.userList);
+  const { orders, loading, error } = useSelector((state) => state.orderList);
   const { userInfo } = useSelector((state) => state.userLogin);
-  const { success: successDelete } = useSelector((state) => state.deleteUser);
 
   useEffect(() => {
     if (userInfo && userInfo.isAdmin) {
-      dispatch(ListUsers());
+      dispatch(listOrders());
     } else {
       history.push("/login");
     }
-  }, [dispatch, history, userInfo, successDelete]);
+  }, [dispatch, history, userInfo]);
 
-  const deleteHandler = (id) => {
-    if (window.confirm("Are you sure")) {
-      dispatch(deleteUser(id));
-    }
-  };
   return (
     <>
-      <h2>User</h2>
+      <h2>Order</h2>
       {loading ? (
         <Loader />
       ) : error ? (
@@ -39,42 +34,42 @@ function UserListScreen({ history }) {
           <thead>
             <tr>
               <th>ID</th>
-              <th>NAME</th>
-              <th>EMAIL</th>
-              <th>ADMIN</th>
+              <th>USER</th>
+              <th>DATE</th>
+              <th>TOTAL</th>
+              <th>PAID</th>
+              <th>DELIVERED</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user._id}>
-                <td>{user._id}</td>
-                <td>{user.name}</td>
+            {orders.map((order) => (
+              <tr key={order._id}>
+                <td>{order._id}</td>
+                <td>{order.user && order.user.name}</td>
+                <td>{order.createdAt.substring(0, 10)}</td>
+                <td>{order.totalPrice}</td>
                 <td>
-                  <a href={`mailto:${user.email}`}>{user.email}</a>
+                  {order.isPaid ? (
+                    order.paidAt.substring(0, 10)
+                  ) : (
+                    <i className="fas fa-times" style={{ color: "red" }}></i>
+                  )}
                 </td>
                 <td>
-                  {user.isAdmin ? (
-                    <i className="fas fa-check" style={{ color: "green" }}></i>
+                  {order.isDelivered ? (
+                    order.deliveredAt.substring(0, 10)
                   ) : (
                     <i className="fas fa-times" style={{ color: "red" }}></i>
                   )}
                 </td>
 
                 <td>
-                  <LinkContainer to={`/admin/user/${user._id}/edit`}>
+                  <LinkContainer to={`/order/${order._id}`}>
                     <Button variant="light" size="sm">
-                      <i className="fas fa-edit"></i>
+                      Details
                     </Button>
                   </LinkContainer>
-
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => deleteHandler(user._id)}
-                  >
-                    <i className="fas fa-trash"></i>
-                  </Button>
                 </td>
               </tr>
             ))}
@@ -85,4 +80,4 @@ function UserListScreen({ history }) {
   );
 }
 
-export default UserListScreen;
+export default OrderListScreen;
