@@ -5,6 +5,7 @@ import {
   deleteProduct,
   createProduct,
   updateProduct,
+  createProductReview,
 } from "../controllers/productController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 const router = express.Router();
@@ -19,6 +20,13 @@ router
   // @route POST  /api/products
   // @access public/admin
   .post(protect, admin, createProduct);
+
+router
+  .route("/:id/reviews")
+  // @desc create new Review
+  // @route POST  /api/products/:id/reviews
+  // @access public
+  .post(protect, createProductReview);
 
 // @desc Fetch Single Product
 // @route GET  /api/products/:id

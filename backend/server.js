@@ -8,11 +8,16 @@ import orderRoutes from "./routes/orderRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import path from "path";
+import morgan from "morgan";
 
-const app = express();
 dotenv.config();
 // mongoDB connection established
 connectDB();
+
+const app = express();
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 
 app.use(express.json());
 
