@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { detailsProduct, createProductReview } from "../actions/productActions";
 import Form from "react-bootstrap/Form";
 import { PRODUCT_CREATE_REVIEW_RESET } from "../constants/productConstants";
+import Meta from "../components/Meta";
 
 const ProductScreen = ({ history, match: { params } }) => {
   const [qty, setQty] = useState(1);
@@ -68,6 +69,7 @@ const ProductScreen = ({ history, match: { params } }) => {
       ) : (
         product && (
           <React.Fragment>
+            <Meta title={product.name} />
             <Row>
               <Col md={6}>
                 <Image src={product.image} alt={product.name} fluid />
