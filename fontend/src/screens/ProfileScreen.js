@@ -8,7 +8,7 @@ import { getUserDetails, updateUserProfile } from "../actions/userActions";
 import { listMyOrders } from "../actions/orderActions";
 import Table from "react-bootstrap/Table";
 import { LinkContainer } from "react-router-bootstrap";
-
+import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
 const ProfileScreen = ({ history }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -33,7 +33,8 @@ const ProfileScreen = ({ history }) => {
     if (!userInfo) {
       history.push("/");
     } else {
-      if (!user.name) {
+      if (!user.name || success) {
+        dispatch({ type: USER_UPDATE_PROFILE_RESET });
         dispatch(getUserDetails("profile"));
         dispatch(listMyOrders());
       } else {
@@ -41,7 +42,7 @@ const ProfileScreen = ({ history }) => {
         setEmail(user.email);
       }
     }
-  }, [userInfo, history, user, dispatch]);
+  }, [userInfo, history, user, dispatch, success]);
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
