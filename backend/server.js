@@ -21,10 +21,6 @@ if (process.env.NODE_ENV === "development") {
 
 app.use(express.json());
 
-app.get("/", (req, res, next) => {
-  res.send("Api Running...");
-});
-
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
@@ -36,6 +32,18 @@ app.get("/api/config/paypal", (req, res) =>
 );
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/fontend/build")));
+  app.get("*", (req, res, next) => {
+    res.sendFile(path.resolve(__dirname, "fontend", "build", "index.html"));
+  });
+} else {
+  app.get("/", (req, res, next) => {
+    res.send("Api Running...");
+  });
+}
+
 // not found url
 app.use(notFound);
 // global error handler
